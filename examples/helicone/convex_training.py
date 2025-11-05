@@ -29,8 +29,6 @@ from pathlib import Path
 from typing import List
 from dotenv import load_dotenv
 
-# Add parent directory to path for ace imports
-sys.path.append(str(Path(__file__).parent.parent.parent))
 
 from ace import (
     ReplayGenerator,

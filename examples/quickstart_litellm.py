@@ -7,12 +7,7 @@ through the unified LiteLLM interface.
 """
 
 import os
-import sys
-from pathlib import Path
 from dotenv import load_dotenv
-
-# Add parent directory to path to import ace
-sys.path.append(str(Path(__file__).parent.parent))
 
 from ace import (
     LiteLLMClient,

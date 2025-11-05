@@ -5,7 +5,7 @@ from unittest.mock import patch, MagicMock
 import logging
 
 
-class TestLiteLLMClient(unittest.TestCase):
+class TestLiteLLMClient(unittest.IsolatedAsyncioTestCase):
     """Test LiteLLM client functionality."""
 
     def test_import(self):
@@ -59,7 +59,7 @@ class TestLiteLLMClient(unittest.TestCase):
             self.assertNotIn('max_refinement_rounds', call_kwargs)
 
 
-class TestClaudeParameterResolution(unittest.TestCase):
+class TestClaudeParameterResolution(unittest.IsolatedAsyncioTestCase):
     """Test Claude-specific parameter resolution functionality."""
 
     def setUp(self):

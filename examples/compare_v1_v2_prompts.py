@@ -7,15 +7,10 @@ compares accuracy, compliance, token usage, and output quality.
 """
 
 import os
-import sys
 import json
 import time
-from pathlib import Path
 from dotenv import load_dotenv
 from typing import Dict, Any, List
-
-# Add parent directory to path
-sys.path.append(str(Path(__file__).parent.parent))
 
 from ace import (
     LiteLLMClient,
@@ -29,7 +24,7 @@ from ace import (
     Playbook,
 )
 from ace.prompts import GENERATOR_PROMPT, REFLECTOR_PROMPT, CURATOR_PROMPT
-from ace.prompts_v2 import (
+from ace.prompts_v2_1 import (
     PromptManager,
     validate_prompt_output,
 )
@@ -270,7 +265,7 @@ def main():
     """Run comprehensive v1 vs v2 comparison."""
 
     print("\n" + "="*70)
-    print(" "*20 + "v1 vs v2 PROMPT COMPARISON")
+    print(" "*20 + "v1 vs v2.1 PROMPT COMPARISON")
     print(" "*15 + "Testing prompt engineering improvements")
     print("="*70)
 

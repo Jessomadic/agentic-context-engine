@@ -27,8 +27,6 @@ from pathlib import Path
 from typing import Dict, List, Any, Tuple, Optional
 from dotenv import load_dotenv
 
-# Add parent directory to path
-sys.path.append(str(Path(__file__).parent.parent.parent))
 
 # Load environment variables
 load_dotenv(override=True)

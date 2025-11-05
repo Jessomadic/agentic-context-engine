@@ -20,7 +20,7 @@ Comprehensive setup and configuration guide for ACE Framework.
 
 ### Python Version Check
 ```bash
-python --version  # Should show 3.9 or higher
+python --version  # Should show 3.11 or higher
 ```
 
 If you need to upgrade Python:

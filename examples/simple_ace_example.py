@@ -6,12 +6,7 @@ This shows the minimal code needed to use ACE with a production LLM.
 """
 
 import os
-import sys
-from pathlib import Path
 from dotenv import load_dotenv
-
-# Add parent directory to path
-sys.path.append(str(Path(__file__).parent.parent))
 
 from ace import (
     LiteLLMClient,

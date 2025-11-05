@@ -12,11 +12,6 @@ This example demonstrates the enhanced v2.1 prompts with MCP techniques:
 Run this example to see the differences and improvements in v2.1.
 """
 
-import sys
-import os
-# Add parent directory to path to import ace modules
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 import json
 from typing import Dict, Any
 from ace.prompts_v2 import PromptManager as PromptManagerV2

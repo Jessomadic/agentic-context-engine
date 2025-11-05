@@ -7,12 +7,7 @@ including router setup for load balancing across multiple models.
 """
 
 import os
-import sys
-from pathlib import Path
 from dotenv import load_dotenv
-
-# Add parent directory to path
-sys.path.append(str(Path(__file__).parent.parent))
 
 from ace import (
     Generator,
