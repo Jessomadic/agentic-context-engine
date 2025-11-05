@@ -30,10 +30,10 @@ from ace import (
     EnvironmentResult,
     Playbook,
 )
-from ace.prompts_v2 import (
+from ace.prompts_v2_1 import (
     PromptManager,
     validate_prompt_output,
-    GENERATOR_V2_PROMPT,
+    GENERATOR_V2_1_PROMPT,
     GENERATOR_MATH_PROMPT,
     GENERATOR_CODE_PROMPT
 )

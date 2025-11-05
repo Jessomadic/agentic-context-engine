@@ -14,7 +14,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Import browser-use
-from ace.prompts_v2 import PromptManager
+from ace.prompts_v2_1 import PromptManager
 from browser_use import Agent, Browser, ChatOpenAI
 
 # Import common utilities

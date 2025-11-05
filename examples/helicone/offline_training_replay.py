@@ -45,7 +45,7 @@ from ace import (
     Playbook,
     LiteLLMClient,
 )
-from ace.prompts_v2 import PromptManager
+from ace.prompts_v2_1 import PromptManager
 from helicone_loader import HeliconeLoader
 
 # Load environment variables
