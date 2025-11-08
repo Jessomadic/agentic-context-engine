@@ -15,11 +15,13 @@ from dataclasses import asdict
 try:
     import opik
     from opik import track, opik_context
+
     OPIK_AVAILABLE = True
 
     # Try to import LiteLLM Opik integration
     try:
         from litellm.integrations.opik.opik import OpikLogger
+
         LITELLM_OPIK_AVAILABLE = True
     except ImportError:
         LITELLM_OPIK_AVAILABLE = False
@@ -29,13 +31,16 @@ except ImportError:
     OPIK_AVAILABLE = False
     LITELLM_OPIK_AVAILABLE = False
     OpikLogger = None
+
     # Create mock decorators for graceful degradation
     def track(*args, **kwargs):
         def decorator(func):
             return func
+
         if len(args) == 1 and callable(args[0]):
             return args[0]
         return decorator
+
 
 logger = logging.getLogger(__name__)
 
@@ -52,7 +57,7 @@ class OpikIntegration:
         self,
         project_name: str = "ace-framework",
         enable_auto_config: bool = True,
-        tags: Optional[List[str]] = None
+        tags: Optional[List[str]] = None,
     ):
         """
         Initialize Opik integration.
@@ -85,7 +90,7 @@ class OpikIntegration:
         harmful_count: int,
         neutral_count: int,
         section: str,
-        metadata: Optional[Dict[str, Any]] = None
+        metadata: Optional[Dict[str, Any]] = None,
     ) -> None:
         """Log bullet evolution metrics to Opik."""
         if not self.enabled:
@@ -102,7 +107,7 @@ class OpikIntegration:
                     {
                         "name": "bullet_effectiveness",
                         "value": effectiveness,
-                        "reason": f"Bullet {bullet_id}: {helpful_count}H/{harmful_count}H/{neutral_count}N"
+                        "reason": f"Bullet {bullet_id}: {helpful_count}H/{harmful_count}H/{neutral_count}N",
                     }
                 ],
                 metadata={
@@ -113,9 +118,9 @@ class OpikIntegration:
                     "harmful_count": harmful_count,
                     "neutral_count": neutral_count,
                     "total_votes": total_votes,
-                    **(metadata or {})
+                    **(metadata or {}),
                 },
-                tags=self.tags + ["bullet-evolution"]
+                tags=self.tags + ["bullet-evolution"],
             )
         except Exception as e:
             logger.error(f"Failed to log bullet evolution: {e}")
@@ -127,7 +132,7 @@ class OpikIntegration:
         bullets_updated: int = 0,
         bullets_removed: int = 0,
         total_bullets: int = 0,
-        metadata: Optional[Dict[str, Any]] = None
+        metadata: Optional[Dict[str, Any]] = None,
     ) -> None:
         """Log playbook update metrics to Opik."""
         if not self.enabled:
@@ -139,7 +144,7 @@ class OpikIntegration:
                     {
                         "name": "playbook_size",
                         "value": float(total_bullets),
-                        "reason": f"Playbook contains {total_bullets} bullets after {operation_type}"
+                        "reason": f"Playbook contains {total_bullets} bullets after {operation_type}",
                     }
                 ],
                 metadata={
@@ -148,9 +153,9 @@ class OpikIntegration:
                     "bullets_updated": bullets_updated,
                     "bullets_removed": bullets_removed,
                     "total_bullets": total_bullets,
-                    **(metadata or {})
+                    **(metadata or {}),
                 },
-                tags=self.tags + ["playbook-update"]
+                tags=self.tags + ["playbook-update"],
             )
         except Exception as e:
             logger.error(f"Failed to log playbook update: {e}")
@@ -162,7 +167,7 @@ class OpikIntegration:
         success: bool,
         input_data: Optional[Dict[str, Any]] = None,
         output_data: Optional[Dict[str, Any]] = None,
-        metadata: Optional[Dict[str, Any]] = None
+        metadata: Optional[Dict[str, Any]] = None,
     ) -> None:
         """Log ACE role performance metrics."""
         if not self.enabled:
@@ -174,13 +179,13 @@ class OpikIntegration:
                     {
                         "name": "role_success",
                         "value": 1.0 if success else 0.0,
-                        "reason": f"{role_name} {'succeeded' if success else 'failed'} in {execution_time:.2f}s"
+                        "reason": f"{role_name} {'succeeded' if success else 'failed'} in {execution_time:.2f}s",
                     },
                     {
                         "name": "execution_time",
                         "value": execution_time,
-                        "reason": f"{role_name} execution time in seconds"
-                    }
+                        "reason": f"{role_name} execution time in seconds",
+                    },
                 ],
                 metadata={
                     "role_name": role_name,
@@ -188,9 +193,9 @@ class OpikIntegration:
                     "success": success,
                     "input_data": input_data,
                     "output_data": output_data,
-                    **(metadata or {})
+                    **(metadata or {}),
                 },
-                tags=self.tags + [f"role-{role_name.lower()}"]
+                tags=self.tags + [f"role-{role_name.lower()}"],
             )
         except Exception as e:
             logger.error(f"Failed to log role performance: {e}")
@@ -203,27 +208,31 @@ class OpikIntegration:
         bullet_count: int,
         successful_predictions: int,
         total_predictions: int,
-        metadata: Optional[Dict[str, Any]] = None
+        metadata: Optional[Dict[str, Any]] = None,
     ) -> None:
         """Log adaptation training metrics."""
         if not self.enabled:
             return
 
         try:
-            accuracy = successful_predictions / total_predictions if total_predictions > 0 else 0.0
+            accuracy = (
+                successful_predictions / total_predictions
+                if total_predictions > 0
+                else 0.0
+            )
 
             opik_context.update_current_trace(
                 feedback_scores=[
                     {
                         "name": "performance_score",
                         "value": performance_score,
-                        "reason": f"Epoch {epoch}, Step {step} performance"
+                        "reason": f"Epoch {epoch}, Step {step} performance",
                     },
                     {
                         "name": "accuracy",
                         "value": accuracy,
-                        "reason": f"Accuracy: {successful_predictions}/{total_predictions}"
-                    }
+                        "reason": f"Accuracy: {successful_predictions}/{total_predictions}",
+                    },
                 ],
                 metadata={
                     "epoch": epoch,
@@ -233,9 +242,9 @@ class OpikIntegration:
                     "successful_predictions": successful_predictions,
                     "total_predictions": total_predictions,
                     "accuracy": accuracy,
-                    **(metadata or {})
+                    **(metadata or {}),
                 },
-                tags=self.tags + ["adaptation-training"]
+                tags=self.tags + ["adaptation-training"],
             )
         except Exception as e:
             logger.error(f"Failed to log adaptation metrics: {e}")
@@ -244,7 +253,7 @@ class OpikIntegration:
         self,
         name: str,
         description: str = "",
-        metadata: Optional[Dict[str, Any]] = None
+        metadata: Optional[Dict[str, Any]] = None,
     ) -> None:
         """Create an Opik experiment for evaluation."""
         if not self.enabled:
@@ -258,9 +267,9 @@ class OpikIntegration:
                     "experiment_name": name,
                     "experiment_description": description,
                     "experiment_timestamp": datetime.now().isoformat(),
-                    **(metadata or {})
+                    **(metadata or {}),
                 },
-                tags=self.tags + ["experiment", f"exp-{name}"]
+                tags=self.tags + ["experiment", f"exp-{name}"],
             )
             logger.info(f"Opik experiment created: {name}")
         except Exception as e:
@@ -283,7 +292,7 @@ class OpikIntegration:
             opik_logger = OpikLogger()
 
             # Add to LiteLLM callbacks if not already present
-            if not hasattr(litellm, 'callbacks') or litellm.callbacks is None:
+            if not hasattr(litellm, "callbacks") or litellm.callbacks is None:
                 litellm.callbacks = []
 
             # Check if OpikLogger is already in callbacks
@@ -294,7 +303,9 @@ class OpikIntegration:
 
             if not opik_logger_present:
                 litellm.callbacks.append(opik_logger)
-                logger.info("OpikLogger added to LiteLLM callbacks for automatic token tracking")
+                logger.info(
+                    "OpikLogger added to LiteLLM callbacks for automatic token tracking"
+                )
                 return True
             else:
                 logger.debug("OpikLogger already present in LiteLLM callbacks")
@@ -326,13 +337,9 @@ def get_integration() -> OpikIntegration:
 
 
 def configure_opik(
-    project_name: str = "ace-framework",
-    tags: Optional[List[str]] = None
+    project_name: str = "ace-framework", tags: Optional[List[str]] = None
 ) -> OpikIntegration:
     """Configure global Opik integration."""
     global _global_integration
-    _global_integration = OpikIntegration(
-        project_name=project_name,
-        tags=tags
-    )
+    _global_integration = OpikIntegration(project_name=project_name, tags=tags)
     return _global_integration

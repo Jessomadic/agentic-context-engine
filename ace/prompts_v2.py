@@ -33,7 +33,7 @@ warnings.warn(
     "Please use prompts_v2_1 instead for enhanced performance and features. "
     "See docs/PROMPTS.md for migration guide.",
     DeprecationWarning,
-    stacklevel=2
+    stacklevel=2,
 )
 
 # ================================
@@ -806,9 +806,11 @@ class PromptManager:
             module_parts = prompt.split(".")
             if len(module_parts) > 2 and module_parts[1] == "prompts_v2_1":
                 from ace import prompts_v2_1
+
                 prompt = getattr(prompts_v2_1, module_parts[-1])
             else:
                 from ace import prompts
+
                 prompt = getattr(prompts, prompt.split(".")[-1])
 
         # Track usage
@@ -832,9 +834,11 @@ class PromptManager:
             module_parts = prompt.split(".")
             if len(module_parts) > 2 and module_parts[1] == "prompts_v2_1":
                 from ace import prompts_v2_1
+
                 prompt = getattr(prompts_v2_1, module_parts[-1])
             else:
                 from ace import prompts
+
                 prompt = getattr(prompts, prompt.split(".")[-1])
 
         self._track_usage(f"reflector-{version}")
@@ -850,9 +854,11 @@ class PromptManager:
             module_parts = prompt.split(".")
             if len(module_parts) > 2 and module_parts[1] == "prompts_v2_1":
                 from ace import prompts_v2_1
+
                 prompt = getattr(prompts_v2_1, module_parts[-1])
             else:
                 from ace import prompts
+
                 prompt = getattr(prompts, prompt.split(".")[-1])
 
         self._track_usage(f"curator-{version}")
@@ -922,7 +928,9 @@ def validate_prompt_output(output: str, role: str) -> tuple[bool, list[str]]:
 
         for tag in data.get("bullet_tags", []):
             if tag.get("tag") not in ["helpful", "harmful", "neutral"]:
-                errors.append(f"Invalid tag: {tag.get('tag')} - only 'helpful', 'harmful', 'neutral' allowed")
+                errors.append(
+                    f"Invalid tag: {tag.get('tag')} - only 'helpful', 'harmful', 'neutral' allowed"
+                )
 
     elif role == "curator":
         required = ["reasoning", "operations"]
@@ -1000,4 +1008,3 @@ custom_prompt = GENERATOR_V2_PROMPT.replace(
 - Validate outputs with the provided validation utilities
 - Consider A/B testing v1 vs v2 for your use case
 """
-

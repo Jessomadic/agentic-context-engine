@@ -1177,9 +1177,11 @@ class PromptManager:
         # Handle legacy v1 references
         if isinstance(prompt, str) and prompt.startswith("ace."):
             from ace import prompts
+
             module_parts = prompt.split(".")
             if len(module_parts) > 2 and module_parts[1] == "prompts_v2":
                 from ace import prompts_v2
+
                 prompt = getattr(prompts_v2, module_parts[-1])
             else:
                 prompt = getattr(prompts, module_parts[-1])
@@ -1204,9 +1206,11 @@ class PromptManager:
             module_parts = prompt.split(".")
             if len(module_parts) > 2 and module_parts[1] == "prompts_v2":
                 from ace import prompts_v2
+
                 prompt = getattr(prompts_v2, module_parts[-1])
             else:
                 from ace import prompts
+
                 prompt = getattr(prompts, module_parts[-1])
 
         self._track_usage(f"reflector-{version}")
@@ -1221,9 +1225,11 @@ class PromptManager:
             module_parts = prompt.split(".")
             if len(module_parts) > 2 and module_parts[1] == "prompts_v2":
                 from ace import prompts_v2
+
                 prompt = getattr(prompts_v2, module_parts[-1])
             else:
                 from ace import prompts
+
                 prompt = getattr(prompts, module_parts[-1])
 
         self._track_usage(f"curator-{version}")
@@ -1266,9 +1272,7 @@ class PromptManager:
             for role, prompts in PromptManager.PROMPTS.items()
         }
 
-    def compare_versions(
-        self, role: str, test_input: Dict[str, Any]
-    ) -> Dict[str, str]:
+    def compare_versions(self, role: str, test_input: Dict[str, Any]) -> Dict[str, str]:
         """
         Compare different prompt versions for A/B testing.
 
@@ -1298,7 +1302,9 @@ class PromptManager:
 # ================================
 
 
-def validate_prompt_output_v2_1(output: str, role: str) -> tuple[bool, list[str], Dict[str, float]]:
+def validate_prompt_output_v2_1(
+    output: str, role: str
+) -> tuple[bool, list[str], Dict[str, float]]:
     """
     Enhanced validation for v2.1 prompt outputs with quality metrics.
 
@@ -1334,9 +1340,9 @@ def validate_prompt_output_v2_1(output: str, role: str) -> tuple[bool, list[str]
         if "quality_check" in data:
             qc = data["quality_check"]
             metrics["completeness"] = (
-                int(qc.get("addresses_question", False)) +
-                int(qc.get("reasoning_complete", False)) +
-                int(qc.get("citations_provided", False))
+                int(qc.get("addresses_question", False))
+                + int(qc.get("reasoning_complete", False))
+                + int(qc.get("citations_provided", False))
             ) / 3.0
 
         # Validate confidence scores
@@ -1507,6 +1513,7 @@ New fields are optional additions only.
 # PROMPT COMPARISON TOOL
 # ================================
 
+
 def compare_prompt_versions(role: str = "generator") -> Dict[str, Any]:
     """
     Compare different prompt versions for analysis.
@@ -1523,8 +1530,12 @@ def compare_prompt_versions(role: str = "generator") -> Dict[str, Any]:
 
     # Get prompts for comparison
     manager = PromptManager()
-    v20_prompt = manager.get_generator_prompt(version="2.0") if role == "generator" else ""
-    v21_prompt = manager.get_generator_prompt(version="2.1") if role == "generator" else ""
+    v20_prompt = (
+        manager.get_generator_prompt(version="2.0") if role == "generator" else ""
+    )
+    v21_prompt = (
+        manager.get_generator_prompt(version="2.1") if role == "generator" else ""
+    )
 
     if role == "reflector":
         v20_prompt = manager.get_reflector_prompt(version="2.0")
@@ -1536,7 +1547,9 @@ def compare_prompt_versions(role: str = "generator") -> Dict[str, Any]:
     # Calculate metrics
     comparisons["length_v20"] = len(v20_prompt)
     comparisons["length_v21"] = len(v21_prompt)
-    comparisons["length_increase"] = (len(v21_prompt) - len(v20_prompt)) / len(v20_prompt)
+    comparisons["length_increase"] = (len(v21_prompt) - len(v20_prompt)) / len(
+        v20_prompt
+    )
 
     # Count key improvements
     v21_features = {

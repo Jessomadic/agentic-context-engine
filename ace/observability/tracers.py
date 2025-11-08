@@ -12,22 +12,21 @@ from typing import Any, Callable, Optional, TypeVar
 logger = logging.getLogger(__name__)
 
 # Type variable for decorated functions
-F = TypeVar('F', bound=Callable[..., Any])
+F = TypeVar("F", bound=Callable[..., Any])
 
 # Flag to check if Opik is available
 _OPIK_AVAILABLE = False
 try:
     import opik
     from opik import track
+
     _OPIK_AVAILABLE = True
 except ImportError:
     pass
 
 
 def maybe_track(
-    name: Optional[str] = None,
-    tags: Optional[list[str]] = None,
-    **kwargs: Any
+    name: Optional[str] = None, tags: Optional[list[str]] = None, **kwargs: Any
 ) -> Callable[[F], F]:
     """
     Conditionally apply @opik.track decorator if Opik is available.
@@ -37,6 +36,7 @@ def maybe_track(
         tags: Tags for the trace
         **kwargs: Additional arguments for @track
     """
+
     def decorator(func: F) -> F:
         if not _OPIK_AVAILABLE:
             return func

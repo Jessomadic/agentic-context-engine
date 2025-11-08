@@ -25,6 +25,7 @@ except ImportError:
 # Try to import Opik for span association
 try:
     from opik.opik_context import get_current_span_data
+
     OPIK_SPAN_AVAILABLE = True
 except ImportError:
     get_current_span_data = None
@@ -144,7 +145,9 @@ class LiteLLMClient(LLMClient):
                 model = config.model
         else:
             if model is None:
-                raise ValueError("Either 'model' parameter or 'config' with model must be provided")
+                raise ValueError(
+                    "Either 'model' parameter or 'config' with model must be provided"
+                )
             self.config = LiteLLMConfig(
                 model=model,
                 api_key=api_key,
@@ -245,19 +248,27 @@ class LiteLLMClient(LLMClient):
 
             # Set up LiteLLM callback for automatic tracking
             if opik_integration.setup_litellm_callback():
-                logger.debug("Opik LiteLLM integration configured for automatic token tracking")
+                logger.debug(
+                    "Opik LiteLLM integration configured for automatic token tracking"
+                )
             else:
-                logger.debug("Opik LiteLLM integration not available or already configured")
+                logger.debug(
+                    "Opik LiteLLM integration not available or already configured"
+                )
 
         except ImportError:
             # Observability module not available, continue without it
-            logger.debug("Opik observability not available, continuing without automatic tracking")
+            logger.debug(
+                "Opik observability not available, continuing without automatic tracking"
+            )
         except Exception as e:
             # Non-critical error, log but don't interrupt initialization
             logger.debug(f"Failed to setup Opik integration (non-critical): {e}")
 
     @staticmethod
-    def _resolve_sampling_params(params: Dict[str, Any], model: str, sampling_priority: str = "temperature") -> Dict[str, Any]:
+    def _resolve_sampling_params(
+        params: Dict[str, Any], model: str, sampling_priority: str = "temperature"
+    ) -> Dict[str, Any]:
         """
         Single source of truth for parameter conflict resolution.
 
@@ -285,65 +296,81 @@ class LiteLLMClient(LLMClient):
             return params
 
         if sampling_priority not in ["temperature", "top_p", "top_k"]:
-            raise ValueError(f"Invalid sampling_priority: {sampling_priority}. Must be one of: temperature, top_p, top_k")
+            raise ValueError(
+                f"Invalid sampling_priority: {sampling_priority}. Must be one of: temperature, top_p, top_k"
+            )
 
         resolved = params.copy()
 
         # Check which sampling params are present and not None
-        has_temperature = 'temperature' in resolved and resolved['temperature'] is not None
-        has_top_p = 'top_p' in resolved and resolved['top_p'] is not None
-        has_top_k = 'top_k' in resolved and resolved['top_k'] is not None
+        has_temperature = (
+            "temperature" in resolved and resolved["temperature"] is not None
+        )
+        has_top_p = "top_p" in resolved and resolved["top_p"] is not None
+        has_top_k = "top_k" in resolved and resolved["top_k"] is not None
 
         # Remove None parameters early
-        if 'temperature' in resolved and resolved['temperature'] is None:
-            resolved.pop('temperature')
-        if 'top_p' in resolved and resolved['top_p'] is None:
-            resolved.pop('top_p')
-        if 'top_k' in resolved and resolved['top_k'] is None:
-            resolved.pop('top_k')
+        if "temperature" in resolved and resolved["temperature"] is None:
+            resolved.pop("temperature")
+        if "top_p" in resolved and resolved["top_p"] is None:
+            resolved.pop("top_p")
+        if "top_k" in resolved and resolved["top_k"] is None:
+            resolved.pop("top_k")
 
         # Apply priority-based resolution
-        if sampling_priority == "temperature" and has_temperature and resolved['temperature'] > 0:
+        if (
+            sampling_priority == "temperature"
+            and has_temperature
+            and resolved["temperature"] > 0
+        ):
             # Non-zero temperature takes precedence - remove others
-            resolved.pop('top_p', None)
-            resolved.pop('top_k', None)
+            resolved.pop("top_p", None)
+            resolved.pop("top_k", None)
             if has_top_p or has_top_k:
-                logger.info(f"Claude model {model}: Using temperature={resolved['temperature']}, ignoring other sampling params")
+                logger.info(
+                    f"Claude model {model}: Using temperature={resolved['temperature']}, ignoring other sampling params"
+                )
 
         elif sampling_priority == "top_p" and has_top_p:
             # top_p takes precedence - remove others
-            resolved.pop('temperature', None)
-            resolved.pop('top_k', None)
+            resolved.pop("temperature", None)
+            resolved.pop("top_k", None)
             if has_temperature or has_top_k:
-                logger.info(f"Claude model {model}: Using top_p={resolved['top_p']}, ignoring other sampling params")
+                logger.info(
+                    f"Claude model {model}: Using top_p={resolved['top_p']}, ignoring other sampling params"
+                )
 
         elif sampling_priority == "top_k" and has_top_k:
             # top_k takes precedence - remove others
-            resolved.pop('temperature', None)
-            resolved.pop('top_p', None)
+            resolved.pop("temperature", None)
+            resolved.pop("top_p", None)
             if has_temperature or has_top_p:
-                logger.info(f"Claude model {model}: Using top_k={resolved['top_k']}, ignoring other sampling params")
+                logger.info(
+                    f"Claude model {model}: Using top_k={resolved['top_k']}, ignoring other sampling params"
+                )
 
         else:
             # Fallback: use default priority (temperature > top_p > top_k)
             # Special case: if temperature is 0, allow top_p to take precedence
-            if has_temperature and resolved['temperature'] > 0:
+            if has_temperature and resolved["temperature"] > 0:
                 # Non-zero temperature takes precedence over everything
-                resolved.pop('top_p', None)
-                resolved.pop('top_k', None)
+                resolved.pop("top_p", None)
+                resolved.pop("top_k", None)
             elif has_top_p:
                 # top_p takes precedence over temperature=0 and top_k
-                resolved.pop('temperature', None)
-                resolved.pop('top_k', None)
+                resolved.pop("temperature", None)
+                resolved.pop("top_k", None)
             elif has_temperature:
                 # Only temperature (including 0), remove others
-                resolved.pop('top_p', None)
-                resolved.pop('top_k', None)
+                resolved.pop("top_p", None)
+                resolved.pop("top_k", None)
             # If only top_k is set, keep it
 
         return resolved
 
-    def complete(self, prompt: str, system: Optional[str] = None, **kwargs: Any) -> LLMResponse:
+    def complete(
+        self, prompt: str, system: Optional[str] = None, **kwargs: Any
+    ) -> LLMResponse:
         """
         Generate completion for the given prompt.
 
@@ -384,9 +411,7 @@ class LiteLLMClient(LLMClient):
 
         # Apply single-point parameter resolution for Claude models
         call_params = self._resolve_sampling_params(
-            merged_params,
-            self.config.model,
-            self.config.sampling_priority
+            merged_params, self.config.model, self.config.sampling_priority
         )
 
         # Add API credentials
@@ -405,20 +430,37 @@ class LiteLLMClient(LLMClient):
                         call_params["metadata"] = {}
                     if "opik" not in call_params["metadata"]:
                         call_params["metadata"]["opik"] = {}
-                    call_params["metadata"]["opik"]["current_span_data"] = current_span_data
-                    logger.debug(f"Associated LLM call with Opik span: {current_span_data.get('name', 'unknown')}")
+                    call_params["metadata"]["opik"][
+                        "current_span_data"
+                    ] = current_span_data
+                    logger.debug(
+                        f"Associated LLM call with Opik span: {current_span_data.get('name', 'unknown')}"
+                    )
             except Exception as e:
                 # Non-critical: continue without span association
                 logger.debug(f"Failed to associate LLM call with Opik span: {e}")
 
         # Add remaining kwargs (excluding ACE-specific and already-handled parameters)
-        ace_specific_params = {"refinement_round", "max_refinement_rounds", "stream_thinking"}
-        handled_params = {"temperature", "top_p", "top_k", "max_tokens", "timeout", "num_retries"}
+        ace_specific_params = {
+            "refinement_round",
+            "max_refinement_rounds",
+            "stream_thinking",
+        }
+        handled_params = {
+            "temperature",
+            "top_p",
+            "top_k",
+            "max_tokens",
+            "timeout",
+            "num_retries",
+        }
         call_params.update(
             {
                 k: v
                 for k, v in kwargs.items()
-                if k not in call_params and k not in ace_specific_params and k not in handled_params
+                if k not in call_params
+                and k not in ace_specific_params
+                and k not in handled_params
             }
         )
 
@@ -450,7 +492,9 @@ class LiteLLMClient(LLMClient):
             logger.error(f"Error in LiteLLM completion: {e}")
             raise
 
-    async def acomplete(self, prompt: str, system: Optional[str] = None, **kwargs: Any) -> LLMResponse:
+    async def acomplete(
+        self, prompt: str, system: Optional[str] = None, **kwargs: Any
+    ) -> LLMResponse:
         """
         Async version of complete.
 
@@ -491,9 +535,7 @@ class LiteLLMClient(LLMClient):
 
         # Apply single-point parameter resolution for Claude models
         call_params = self._resolve_sampling_params(
-            merged_params,
-            self.config.model,
-            self.config.sampling_priority
+            merged_params, self.config.model, self.config.sampling_priority
         )
 
         # Add API credentials
@@ -512,20 +554,37 @@ class LiteLLMClient(LLMClient):
                         call_params["metadata"] = {}
                     if "opik" not in call_params["metadata"]:
                         call_params["metadata"]["opik"] = {}
-                    call_params["metadata"]["opik"]["current_span_data"] = current_span_data
-                    logger.debug(f"Associated LLM call with Opik span: {current_span_data.get('name', 'unknown')}")
+                    call_params["metadata"]["opik"][
+                        "current_span_data"
+                    ] = current_span_data
+                    logger.debug(
+                        f"Associated LLM call with Opik span: {current_span_data.get('name', 'unknown')}"
+                    )
             except Exception as e:
                 # Non-critical: continue without span association
                 logger.debug(f"Failed to associate LLM call with Opik span: {e}")
 
         # Add remaining kwargs (excluding ACE-specific and already-handled parameters)
-        ace_specific_params = {"refinement_round", "max_refinement_rounds", "stream_thinking"}
-        handled_params = {"temperature", "top_p", "top_k", "max_tokens", "timeout", "num_retries"}
+        ace_specific_params = {
+            "refinement_round",
+            "max_refinement_rounds",
+            "stream_thinking",
+        }
+        handled_params = {
+            "temperature",
+            "top_p",
+            "top_k",
+            "max_tokens",
+            "timeout",
+            "num_retries",
+        }
         call_params.update(
             {
                 k: v
                 for k, v in kwargs.items()
-                if k not in call_params and k not in ace_specific_params and k not in handled_params
+                if k not in call_params
+                and k not in ace_specific_params
+                and k not in handled_params
             }
         )
 

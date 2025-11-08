@@ -20,6 +20,7 @@ except ImportError:
     def maybe_track(*args, **kwargs):
         def decorator(func):
             return func
+
         if len(args) == 1 and callable(args[0]):
             return args[0]
         return decorator
@@ -45,8 +46,10 @@ def _safe_json_loads(text: str) -> Dict[str, Any]:
         # Check if this looks like incomplete JSON (truncated response)
         if "Unterminated string" in str(exc) or "Expecting" in str(exc):
             # Try to detect if this is a truncation issue
-            if text.count('{') > text.count('}') or text.rstrip().endswith('"'):
-                raise ValueError(f"LLM response appears to be truncated JSON. This may indicate the response was cut off mid-generation. Original error: {exc}\nPartial text: {text[:200]}...") from exc
+            if text.count("{") > text.count("}") or text.rstrip().endswith('"'):
+                raise ValueError(
+                    f"LLM response appears to be truncated JSON. This may indicate the response was cut off mid-generation. Original error: {exc}\nPartial text: {text[:200]}..."
+                ) from exc
 
         debug_path = Path("logs/json_failures.log")
         debug_path.parent.mkdir(parents=True, exist_ok=True)
@@ -126,7 +129,7 @@ class Generator:
     @maybe_track(
         name="generator_generate",
         tags=["ace-framework", "role", "generator"],
-        project_name="ace-roles"
+        project_name="ace-roles",
     )
     def generate(
         self,
@@ -142,7 +145,7 @@ class Generator:
             context=context,
             playbook=playbook,
             reflection=reflection,
-            **kwargs
+            **kwargs,
         )
 
     def _generate_impl(
@@ -177,7 +180,7 @@ class Generator:
         last_error: Optional[Exception] = None
 
         # Filter out non-LLM kwargs (like 'sample' used for ReplayGenerator)
-        llm_kwargs = {k: v for k, v in kwargs.items() if k != 'sample'}
+        llm_kwargs = {k: v for k, v in kwargs.items() if k != "sample"}
 
         for attempt in range(self.max_retries):
             response = self.llm.complete(prompt, **llm_kwargs)
@@ -252,14 +255,14 @@ class ReplayGenerator:
     """
 
     def __init__(
-        self,
-        responses: Optional[Dict[str, str]] = None,
-        default_response: str = ""
+        self, responses: Optional[Dict[str, str]] = None, default_response: str = ""
     ) -> None:
         self.responses = responses if responses is not None else {}
         self.default_response = default_response
 
-    def _extract_response_from_sample(self, sample: Any) -> tuple[Optional[str], Optional[str]]:
+    def _extract_response_from_sample(
+        self, sample: Any
+    ) -> tuple[Optional[str], Optional[str]]:
         """
         Extract response from sample object using multiple fallback strategies.
 
@@ -270,21 +273,21 @@ class ReplayGenerator:
             Tuple of (response_text, source_name) or (None, None) if not found
         """
         # Try sample.metadata['response'] (Sample dataclass)
-        if hasattr(sample, 'metadata') and isinstance(sample.metadata, dict):
-            response = sample.metadata.get('response')
+        if hasattr(sample, "metadata") and isinstance(sample.metadata, dict):
+            response = sample.metadata.get("response")
             if response:
                 return response, "sample_metadata"
 
         # Try sample['metadata']['response'] (nested dict)
-        if isinstance(sample, dict) and 'metadata' in sample:
-            if isinstance(sample['metadata'], dict):
-                response = sample['metadata'].get('response')
+        if isinstance(sample, dict) and "metadata" in sample:
+            if isinstance(sample["metadata"], dict):
+                response = sample["metadata"].get("response")
                 if response:
                     return response, "sample_dict_metadata"
 
         # Try sample['response'] (direct dict)
         if isinstance(sample, dict):
-            response = sample.get('response')
+            response = sample.get("response")
             if response:
                 return response, "sample_dict_direct"
 
@@ -293,7 +296,7 @@ class ReplayGenerator:
     @maybe_track(
         name="replay_generator_generate",
         tags=["ace-framework", "role", "replay-generator"],
-        project_name="ace-roles"
+        project_name="ace-roles",
     )
     def generate(
         self,
@@ -336,8 +339,8 @@ class ReplayGenerator:
         response_source = None
 
         # Priority 1-3: Extract from sample if provided
-        if 'sample' in kwargs:
-            sample = kwargs['sample']
+        if "sample" in kwargs:
+            sample = kwargs["sample"]
             final_answer, response_source = self._extract_response_from_sample(sample)
 
         # Priority 4: Look up in responses dict
@@ -366,7 +369,7 @@ class ReplayGenerator:
             "sample_dict_metadata": "[Replayed from sample dict metadata]",
             "sample_dict_direct": "[Replayed from sample dict]",
             "responses_dict": "[Replayed from responses dict]",
-            "default_response": "[Replayed using default response]"
+            "default_response": "[Replayed using default response]",
         }
         reasoning = reasoning_map.get(response_source, "[Replayed - source unknown]")
 
@@ -382,10 +385,10 @@ class ReplayGenerator:
                 "replay_metadata": {
                     "response_source": response_source,
                     "question_found_in_dict": question in self.responses,
-                    "sample_provided": 'sample' in kwargs,
-                    "total_responses_in_mapping": len(self.responses)
-                }
-            }
+                    "sample_provided": "sample" in kwargs,
+                    "total_responses_in_mapping": len(self.responses),
+                },
+            },
         )
 
 
@@ -453,7 +456,7 @@ class Reflector:
     @maybe_track(
         name="reflector_reflect",
         tags=["ace-framework", "role", "reflector"],
-        project_name="ace-roles"
+        project_name="ace-roles",
     )
     def reflect(
         self,
@@ -471,7 +474,7 @@ class Reflector:
             playbook=playbook,
             ground_truth=ground_truth,
             feedback=feedback,
-            **kwargs
+            **kwargs,
         )
 
     def _reflect_impl(
@@ -499,7 +502,7 @@ class Reflector:
         last_error: Optional[Exception] = None
 
         # Filter out non-LLM kwargs (like 'sample' used for ReplayGenerator)
-        llm_kwargs = {k: v for k, v in kwargs.items() if k != 'sample'}
+        llm_kwargs = {k: v for k, v in kwargs.items() if k != "sample"}
 
         for round_idx in range(max_refinement_rounds):
             prompt = base_prompt
@@ -618,7 +621,7 @@ class Curator:
     @maybe_track(
         name="curator_curate",
         tags=["ace-framework", "role", "curator"],
-        project_name="ace-roles"
+        project_name="ace-roles",
     )
     def curate(
         self,
@@ -634,7 +637,7 @@ class Curator:
             playbook=playbook,
             question_context=question_context,
             progress=progress,
-            **kwargs
+            **kwargs,
         )
 
     def _curate_impl(
@@ -673,7 +676,7 @@ class Curator:
         last_error: Optional[Exception] = None
 
         # Filter out non-LLM kwargs (like 'sample' used for ReplayGenerator)
-        llm_kwargs = {k: v for k, v in kwargs.items() if k != 'sample'}
+        llm_kwargs = {k: v for k, v in kwargs.items() if k != "sample"}
 
         for attempt in range(self.max_retries):
             response = self.llm.complete(prompt, **llm_kwargs)

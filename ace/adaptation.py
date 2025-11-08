@@ -109,7 +109,7 @@ class SimpleEnvironment(TaskEnvironment):
             return EnvironmentResult(
                 feedback="No ground truth provided",
                 ground_truth=None,
-                metrics={"correct": 0.0}
+                metrics={"correct": 0.0},
             )
 
         answer = generator_output.final_answer.lower()
@@ -117,9 +117,13 @@ class SimpleEnvironment(TaskEnvironment):
         is_correct = truth in answer
 
         return EnvironmentResult(
-            feedback="Correct!" if is_correct else f"Incorrect. Expected: {sample.ground_truth}",
+            feedback=(
+                "Correct!"
+                if is_correct
+                else f"Incorrect. Expected: {sample.ground_truth}"
+            ),
             ground_truth=sample.ground_truth,
-            metrics={"correct": 1.0 if is_correct else 0.0}
+            metrics={"correct": 1.0 if is_correct else 0.0},
         )
 
 
@@ -165,6 +169,7 @@ class AdapterBase:
         if enable_observability:
             try:
                 from .observability import get_integration
+
                 self.opik_integration = get_integration()
             except ImportError:
                 self.opik_integration = None
@@ -183,13 +188,13 @@ class AdapterBase:
         reflection: ReflectorOutput,
         curator_output: CuratorOutput,
         epoch: int,
-        step: int
+        step: int,
     ) -> None:
         """Track data for observability analysis."""
         if not self.enable_observability or not self.opik_integration:
             return
 
-        sample_id = sample.metadata.get('sample_id', f'sample_{step}')
+        sample_id = sample.metadata.get("sample_id", f"sample_{step}")
 
         # Calculate performance score from success/quality metrics only
         performance_score = 0.0
@@ -197,7 +202,15 @@ class AdapterBase:
             # Only use boolean/probability metrics that represent success/quality (0-1 range)
             score_metrics = []
             for key, value in environment_result.metrics.items():
-                if key in ['correct', 'efficient', 'success', 'accuracy', 'score', 'syntax_valid', 'contains_required']:
+                if key in [
+                    "correct",
+                    "efficient",
+                    "success",
+                    "accuracy",
+                    "score",
+                    "syntax_valid",
+                    "contains_required",
+                ]:
                     if isinstance(value, (int, float, bool)):
                         score_metrics.append(float(value))
 
@@ -214,11 +227,15 @@ class AdapterBase:
                 successful_predictions=1 if performance_score > 0.5 else 0,
                 total_predictions=1,
                 metadata={
-                    'sample_id': sample_id,
-                    'question': sample.question[:100] + "..." if len(sample.question) > 100 else sample.question,
-                    'bullet_ids_used': generator_output.bullet_ids,
-                    'environment_metrics': environment_result.metrics
-                }
+                    "sample_id": sample_id,
+                    "question": (
+                        sample.question[:100] + "..."
+                        if len(sample.question) > 100
+                        else sample.question
+                    ),
+                    "bullet_ids_used": generator_output.bullet_ids,
+                    "environment_metrics": environment_result.metrics,
+                },
             )
         except Exception as e:
             # Log observability errors in debug mode but don't interrupt main flow
@@ -230,9 +247,9 @@ class AdapterBase:
             return {}
 
         return {
-            'observability_enabled': True,
-            'opik_available': self.opik_integration.is_available(),
-            'playbook_stats': self.playbook.stats()
+            "observability_enabled": True,
+            "opik_available": self.opik_integration.is_available(),
+            "playbook_stats": self.playbook.stats(),
         }
 
     # ------------------------------------------------------------------ #
@@ -311,8 +328,13 @@ class AdapterBase:
         # Track observability data if enabled
         if self.enable_observability:
             self._track_observability_data(
-                sample, generator_output, env_result, reflection, curator_output,
-                epoch, step_index
+                sample,
+                generator_output,
+                env_result,
+                reflection,
+                curator_output,
+                epoch,
+                step_index,
             )
 
         self.playbook.apply_delta(curator_output.delta)
@@ -411,12 +433,16 @@ class OfflineAdapter(AdapterBase):
         from pathlib import Path
 
         results: List[AdapterStepResult] = []
-        failed_samples: List[tuple] = []  # Track (epoch, step_idx, error) for failed samples
+        failed_samples: List[tuple] = (
+            []
+        )  # Track (epoch, step_idx, error) for failed samples
         total_steps = len(samples)
 
         # Validate checkpoint parameters
         if checkpoint_interval is not None and checkpoint_dir is None:
-            raise ValueError("checkpoint_dir must be provided when checkpoint_interval is set")
+            raise ValueError(
+                "checkpoint_dir must be provided when checkpoint_interval is set"
+            )
 
         for epoch_idx in range(1, epochs + 1):
             for step_idx, sample in enumerate(samples, start=1):
@@ -432,14 +458,22 @@ class OfflineAdapter(AdapterBase):
                     results.append(result)
 
                     # Save checkpoint if interval reached
-                    if checkpoint_interval and checkpoint_dir and len(results) % checkpoint_interval == 0:
+                    if (
+                        checkpoint_interval
+                        and checkpoint_dir
+                        and len(results) % checkpoint_interval == 0
+                    ):
                         checkpoint_path = Path(checkpoint_dir)
-                        numbered_checkpoint = checkpoint_path / f"convex_checkpoint_{len(results)}.json"
+                        numbered_checkpoint = (
+                            checkpoint_path / f"convex_checkpoint_{len(results)}.json"
+                        )
                         latest_checkpoint = checkpoint_path / "convex_latest.json"
 
                         self.playbook.save_to_file(str(numbered_checkpoint))
                         self.playbook.save_to_file(str(latest_checkpoint))
-                        logger.info(f"Checkpoint saved: {len(results)} samples → {numbered_checkpoint.name}")
+                        logger.info(
+                            f"Checkpoint saved: {len(results)} samples → {numbered_checkpoint.name}"
+                        )
 
                 except Exception as e:
                     # Log error and continue to next sample

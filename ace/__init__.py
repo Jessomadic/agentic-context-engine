@@ -29,6 +29,7 @@ from .features import has_opik, has_litellm
 if has_opik():
     try:
         from .observability import OpikIntegration
+
         OBSERVABILITY_AVAILABLE = True
     except ImportError:
         OpikIntegration = None
@@ -41,6 +42,7 @@ else:
 if has_litellm():
     try:
         from .llm_providers import LiteLLMClient
+
         LITELLM_AVAILABLE = True
     except ImportError:
         LiteLLMClient = None

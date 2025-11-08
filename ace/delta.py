@@ -34,9 +34,7 @@ class DeltaOperation:
             content=payload.get("content") and str(payload["content"]),
             bullet_id=payload.get("bullet_id")
             and str(payload.get("bullet_id")),  # type: ignore[arg-type]
-            metadata={
-                str(k): int(v) for k, v in metadata.items()
-            },
+            metadata={str(k): int(v) for k, v in metadata.items()},
         )
 
     def to_json(self) -> Dict[str, object]:

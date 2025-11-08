@@ -88,13 +88,13 @@ def get_available_features() -> Dict[str, bool]:
         {'opik': True, 'litellm': True, 'langchain': False, ...}
     """
     return {
-        'opik': has_opik(),
-        'litellm': has_litellm(),
-        'langchain': has_langchain(),
-        'transformers': has_transformers(),
-        'torch': has_torch(),
-        'browser_use': has_browser_use(),
-        'playwright': has_playwright(),
+        "opik": has_opik(),
+        "litellm": has_litellm(),
+        "langchain": has_langchain(),
+        "transformers": has_transformers(),
+        "torch": has_torch(),
+        "browser_use": has_browser_use(),
+        "playwright": has_playwright(),
     }
 
 
@@ -102,15 +102,15 @@ def print_feature_status() -> None:
     """Print a formatted table of available features."""
     features = get_available_features()
 
-    print("\n" + "="*50)
+    print("\n" + "=" * 50)
     print("ACE Framework - Available Features")
-    print("="*50)
+    print("=" * 50)
 
     for feature, available in features.items():
         status = "✓ Available" if available else "✗ Not installed"
         print(f"  {feature:<15} {status}")
 
-    print("="*50 + "\n")
+    print("=" * 50 + "\n")
 
 
 if __name__ == "__main__":
