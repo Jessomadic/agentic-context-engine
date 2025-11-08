@@ -23,7 +23,9 @@ class DeltaOperation:
     def from_json(cls, payload: Dict[str, object]) -> "DeltaOperation":
         # Filter metadata for TAG operations to only include valid tags
         metadata_raw = payload.get("metadata") or {}
-        metadata: Dict[str, Any] = cast(Dict[str, Any], metadata_raw) if isinstance(metadata_raw, dict) else {}
+        metadata: Dict[str, Any] = (
+            cast(Dict[str, Any], metadata_raw) if isinstance(metadata_raw, dict) else {}
+        )
 
         if str(payload["type"]).upper() == "TAG":
             # Only include valid tag names for TAG operations
@@ -37,8 +39,14 @@ class DeltaOperation:
         return cls(
             type=cast(OperationType, op_type),
             section=str(payload.get("section", "")),
-            content=str(payload["content"]) if payload.get("content") is not None else None,
-            bullet_id=str(payload["bullet_id"]) if payload.get("bullet_id") is not None else None,
+            content=(
+                str(payload["content"]) if payload.get("content") is not None else None
+            ),
+            bullet_id=(
+                str(payload["bullet_id"])
+                if payload.get("bullet_id") is not None
+                else None
+            ),
             metadata={str(k): int(v) for k, v in metadata.items()},
         )
 

@@ -1190,7 +1190,11 @@ class PromptManager:
         self._track_usage(f"generator-{prompt_key}")
 
         # Add current date for v2+ prompts
-        if prompt is not None and version.startswith("2") and "{current_date}" in prompt:
+        if (
+            prompt is not None
+            and version.startswith("2")
+            and "{current_date}" in prompt
+        ):
             prompt = prompt.replace(
                 "{current_date}", datetime.now().strftime("%Y-%m-%d")
             )
@@ -1558,9 +1562,9 @@ def compare_prompt_versions(role: str = "generator") -> Dict[str, Any]:
     # Calculate metrics
     comparisons["length_v20"] = len(v20_prompt)
     comparisons["length_v21"] = len(v21_prompt)
-    comparisons["length_increase"] = float((len(v21_prompt) - len(v20_prompt)) / len(
-        v20_prompt
-    ))
+    comparisons["length_increase"] = float(
+        (len(v21_prompt) - len(v20_prompt)) / len(v20_prompt)
+    )
 
     # Count key improvements
     v21_features: Dict[str, Any] = {

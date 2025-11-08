@@ -18,15 +18,15 @@ try:
 except ImportError:
     # Mock decorator if observability not available
     from typing import TypeVar, Callable
-    F = TypeVar('F', bound=Callable[..., Any])
+
+    F = TypeVar("F", bound=Callable[..., Any])
 
     def maybe_track(
-        name: Optional[str] = None,
-        tags: Optional[List[str]] = None,
-        **kwargs: Any
+        name: Optional[str] = None, tags: Optional[List[str]] = None, **kwargs: Any
     ) -> Callable[[F], F]:
         def decorator(func: F) -> F:
             return func
+
         return decorator
 
 
@@ -375,7 +375,9 @@ class ReplayGenerator:
             "responses_dict": "[Replayed from responses dict]",
             "default_response": "[Replayed using default response]",
         }
-        reasoning = reasoning_map.get(response_source if response_source else "", "[Replayed - source unknown]")
+        reasoning = reasoning_map.get(
+            response_source if response_source else "", "[Replayed - source unknown]"
+        )
 
         # Return GeneratorOutput matching the interface
         return GeneratorOutput(

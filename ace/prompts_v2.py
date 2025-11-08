@@ -823,7 +823,9 @@ class PromptManager:
             )
 
         if prompt is None:
-            raise ValueError(f"No generator prompt found for version {version}, domain {domain}")
+            raise ValueError(
+                f"No generator prompt found for version {version}, domain {domain}"
+            )
 
         return prompt
 
