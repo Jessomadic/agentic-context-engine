@@ -43,6 +43,7 @@ export OPENAI_API_KEY="your-api-key"
 from ace import ACELiteLLM
 
 agent = ACELiteLLM(model="gpt-4o-mini")
+
 answer = agent.ask("What is the capital of France?")
 print(answer)  # Paris
 ```
