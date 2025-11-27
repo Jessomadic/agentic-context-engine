@@ -46,6 +46,7 @@ dependencies = [
     "python-toon>=0.1.0",
     "tenacity>=8.0.0",
     "instructor>=1.0.0",
+    "browser-use>=0.9.1",
 ]
 
 [project.optional-dependencies]
