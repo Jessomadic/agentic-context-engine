@@ -541,11 +541,6 @@ async def main():
         if result["error"]:
             print(f"   Error: {result['error']}")
 
-        # Small delay between checks to avoid rate limits
-        if i < len(domains):
-            print(f"⏳ Waiting 2 seconds before next check...")
-            await asyncio.sleep(2)
-
     # Wait for async learning to complete before saving
     print(f"\n⏳ Waiting for background learning to complete...")
     await agent.wait_for_learning(timeout=60.0)
