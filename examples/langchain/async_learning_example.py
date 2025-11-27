@@ -45,7 +45,7 @@ async def run_async_langchain():
 
     # Wrap with ACE for learning
     ace_chain = ACELangChain(
-        chain=chain,
+        runnable=chain,
         ace_model="gpt-4o-mini",
         async_learning=True,  # Learning in background!
     )
@@ -131,7 +131,7 @@ async def run_sync_langchain():
 
     # Wrap with ACE - sync mode
     ace_chain = ACELangChain(
-        chain=chain,
+        runnable=chain,
         ace_model="gpt-4o-mini",
         async_learning=False,  # Blocking mode
     )
