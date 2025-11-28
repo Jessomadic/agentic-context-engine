@@ -66,11 +66,11 @@ def run_async_learning():
     agent = ACELiteLLM(model="gpt-4o-mini")
 
     samples = [
-        Sample(question="What is 5+5?", ground_truth="10"),
-        Sample(question="What color is grass?", ground_truth="green"),
-        Sample(question="Capital of Japan?", ground_truth="Tokyo"),
-        Sample(question="What is 20/4?", ground_truth="5"),
-        Sample(question="How many months in a year?", ground_truth="12"),
+        Sample(question="What is 2+2?", ground_truth="4"),
+        Sample(question="What color is the sky?", ground_truth="blue"),
+        Sample(question="Capital of France?", ground_truth="Paris"),
+        Sample(question="What is 10-3?", ground_truth="7"),
+        Sample(question="How many days in a week?", ground_truth="7"),
     ]
 
     environment = SimpleEnvironment()
@@ -110,6 +110,13 @@ def run_async_learning():
     print(f"  - Learning wait time: {wait_time:.2f}s")
     print(f"  - Total time: {total_time:.2f}s")
     print(f"  - Strategies learned: {len(agent.playbook.bullets())}")
+
+    # Show complete playbook
+    print(f"\n📚 COMPLETE PLAYBOOK:")
+    if agent.playbook.bullets():
+        print(str(agent.playbook))
+    else:
+        print("(empty)")
 
     return results_time, total_time
 

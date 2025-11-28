@@ -102,16 +102,19 @@ async def run_async_langchain():
     print(f"  - Completed: {final_stats['completed']}")
     print(f"  - Strategies learned: {len(ace_chain.playbook.bullets())}")
 
-    print(f"\n📊 TIMING:")
-    print(f"  - Answers returned in: {results_time:.2f}s")
+    print(f"\nResults:")
+    print(f"  - Samples processed: {len(questions)}")
+    print(f"  - Results returned in: {results_time:.2f}s")
     print(f"  - Learning wait time: {wait_time:.2f}s")
     print(f"  - Total time: {total_time:.2f}s")
+    print(f"  - Strategies learned: {len(ace_chain.playbook.bullets())}")
 
-    # Show learned strategies
+    # Show complete playbook
+    print(f"\n📚 COMPLETE PLAYBOOK:")
     if ace_chain.playbook.bullets():
-        print(f"\n📚 LEARNED STRATEGIES:")
-        for bullet in ace_chain.playbook.bullets()[:3]:
-            print(f"  - {bullet.content[:60]}...")
+        print(str(ace_chain.playbook))
+    else:
+        print("(empty)")
 
     return results_time, total_time
 
@@ -137,9 +140,11 @@ async def run_sync_langchain():
     )
 
     questions = [
-        "What is 5+5?",
-        "What color is grass?",
-        "Capital of Japan?",
+        "What is 2+2?",
+        "What color is the sky?",
+        "Capital of France?",
+        "What is 10-3?",
+        "How many days in a week?",
     ]
 
     print(f"\nProcessing {len(questions)} questions with sync learning...")
@@ -157,8 +162,10 @@ async def run_sync_langchain():
         print(f"  ⏱️  {q_time:.2f}s (includes learning)")
 
     total_time = time.time() - start
-    print(f"\n✅ Total time: {total_time:.2f}s")
-    print(f"   Strategies learned: {len(ace_chain.playbook.bullets())}")
+    print(f"\nResults:")
+    print(f"  - Samples processed: {len(questions)}")
+    print(f"  - Total time: {total_time:.2f}s")
+    print(f"  - Strategies learned: {len(ace_chain.playbook.bullets())}")
 
     return total_time
 
@@ -189,10 +196,12 @@ async def main():
     print("\n" + "=" * 60)
     print("SUMMARY")
     print("=" * 60)
-    print(f"\nSync mode (3 questions): {sync_time:.2f}s")
-    print(f"Async mode answers (5 questions): {async_results_time:.2f}s")
-    print(f"Async mode total (5 questions): {async_total_time:.2f}s")
-    print("\n✅ Async mode doesn't block - learning happens in background!")
+    print(f"\nSync mode total time:    {sync_time:.2f}s")
+    print(f"Async mode results time: {async_results_time:.2f}s")
+    print(f"Async mode total time:   {async_total_time:.2f}s")
+
+    speedup = sync_time / async_results_time if async_results_time > 0 else 1.0
+    print(f"\n✅ Async mode returned results {speedup:.1f}x faster!")
 
 
 if __name__ == "__main__":
