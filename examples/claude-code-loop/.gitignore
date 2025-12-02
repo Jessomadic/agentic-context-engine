@@ -1,0 +1,12 @@
+# Workspace is a separate git repository - don't track it
+workspace/
+
+# Generated data
+.data/
+*.json
+!.env.example
+
+# Python
+__pycache__/
+*.pyc
+.env

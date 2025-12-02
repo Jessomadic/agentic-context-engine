@@ -12,6 +12,7 @@ Usage:
 
 import os
 import re
+import sys
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -20,10 +21,26 @@ from ace.integrations import ACEClaudeCode
 load_dotenv()
 
 # Configuration
+DEMO_DIR = Path(__file__).parent
+DATA_DIR = Path(os.getenv("ACE_DEMO_DATA_DIR", str(DEMO_DIR / ".data")))
 AUTO_MODE = os.getenv("AUTO_MODE", "false").lower() == "true"
 ACE_MODEL = os.getenv("ACE_MODEL", "claude-sonnet-4-5-20250929")
-WORKSPACE_DIR = Path(__file__).parent / "workspace"
-PLAYBOOK_PATH = Path(__file__).parent / "playbooks" / "ace_typescript.json"
+
+# Paths
+WORKSPACE_DIR = DEMO_DIR / "workspace"  # Separate git repo
+PLAYBOOK_PATH = DATA_DIR / "playbooks" / "ace_typescript.json"
+LOGS_DIR = DATA_DIR / "logs"
+
+# Ensure data directories exist
+DATA_DIR.mkdir(parents=True, exist_ok=True)
+(DATA_DIR / "playbooks").mkdir(exist_ok=True)
+LOGS_DIR.mkdir(exist_ok=True)
+
+# Verify workspace is a git repository
+if not (WORKSPACE_DIR / ".git").exists():
+    print("❌ Error: Workspace is not a git repository!")
+    print(f"   Run ./reset_workspace.sh to initialize workspace")
+    sys.exit(1)
 
 
 def parse_next_task_from_todo(workspace_dir: Path) -> str | None:
@@ -103,9 +120,16 @@ WORKSPACE STRUCTURE:
 
 CRITICAL REQUIREMENTS:
 1. Apply relevant strategies from the playbook context (injected above)
-2. Test every new feature before committing to ensure it works
-3. Make atomic commits after each logical unit of work
-4. Focus on actual work, not elaborate documentation or setup
+2. Test every new feature/change BEFORE committing (run tests, check compilation)
+3. Make atomic git commits after each working unit (commit message should explain what was done and why)
+4. You are working in a dedicated git repository - commit freely after testing
+5. Focus on actual work, not elaborate documentation or setup
+
+GIT WORKFLOW:
+- After completing a logical unit of work (e.g., translate one file, fix one bug)
+- Run tests to verify it works
+- Commit with: git add <files> && git commit -m "Clear message"
+- Each task may result in one or more commits
 
 FOCUS YOUR EFFORT ON:
 - Reading source files and understanding the implementation
@@ -138,8 +162,6 @@ def main():
     print(f"   Mode: {'AUTOMATIC' if AUTO_MODE else 'INTERACTIVE'}")
 
     # Initialize ACEClaudeCode
-    PLAYBOOK_PATH.parent.mkdir(parents=True, exist_ok=True)
-
     agent = ACEClaudeCode(
         working_dir=str(WORKSPACE_DIR),
         ace_model=ACE_MODEL,

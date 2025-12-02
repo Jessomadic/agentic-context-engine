@@ -92,6 +92,39 @@ python ace_loop.py
 
 ## Architecture
 
+### Three-Layer Isolation
+
+The demo uses three isolated layers for clean separation:
+
+#### 1. ACE Framework Repository (this repo)
+Contains demo scripts:
+- `ace_loop.py` - Main orchestrator
+- `reset_workspace.sh` - Workspace initialization
+- `workspace_template/` - Template for new workspace
+
+#### 2. Workspace Git Repository (`workspace/`)
+**Separate git repository** where Claude Code commits its work:
+- **`.git/`** - Claude Code commits here after testing
+- `specs/` - Project specification and coding standards
+- `source/` - Python code to translate (git ignored in workspace)
+- `target/` - TypeScript translation output
+- `.agent/` - Claude Code's TODO and working files (git ignored in workspace)
+
+The workspace is git-ignored by the ACE framework repo.
+
+#### 3. Data Directory (`.data/`)
+ACE learning artifacts (not in any git repo):
+- `.data/playbooks/` - Learned strategies across runs
+- `.data/logs/` - Execution logs and archives
+
+**Why Separate Git Repos?**
+
+- ✅ Claude Code can safely commit after each tested change
+- ✅ Demo users don't pollute the ACE framework repo
+- ✅ Clean separation: framework code vs. agent work vs. learned data
+- ✅ Can inspect agent's commit history: `cd workspace && git log`
+- ✅ Can push agent's work to separate remote if desired
+
 ### Integration Pattern Components
 
 **1. INJECT - Playbook Context**
@@ -176,13 +209,18 @@ Translation complete when:
 - ✅ Strict TypeScript mode (no `any`)
 - ✅ Playbook has 20-30 translation strategies
 
-## Files
+## Files and Directories
 
-- **workspace/source/**: Python ACE source (cloned by `reset_workspace.sh`)
-- **workspace/specs/**: Translation specs for Claude Code
-- **workspace/target/**: TypeScript output (created at runtime)
-- **workspace/.agent/**: TODO.md and logs (managed by Claude Code)
-- **playbooks/**: Learned strategies (created at runtime)
+- **workspace/** - Separate git repository (git ignored by ACE framework repo)
+  - **workspace/.git/** - Claude Code commits here after testing
+  - **workspace/source/** - Python ACE source (cloned by `reset_workspace.sh`, git ignored in workspace)
+  - **workspace/specs/** - Translation specs for Claude Code
+  - **workspace/target/** - TypeScript output (tracked by workspace git)
+  - **workspace/.agent/** - TODO.md and logs (managed by Claude Code, git ignored in workspace)
+- **.data/** - Generated data (git ignored)
+  - **.data/playbooks/** - Learned strategies (persists across resets)
+  - **.data/logs/** - Execution logs and archives
+- **workspace_template/** - Template copied to workspace/ on first run
 
 ## Next Steps
 
@@ -190,8 +228,47 @@ Translation complete when:
 2. ACE will create TODO.md with translation tasks
 3. **After task 1**: Loop reads TODO.md and prompts for task 2
 4. Each task uses improved playbook from previous tasks
-5. Check `playbooks/ace_typescript.json` to see learned strategies grow
+5. Check `.data/playbooks/ace_typescript.json` to see learned strategies grow
 6. When comfortable, switch to AUTO_MODE for hands-free completion
+
+## Inspecting Agent Work
+
+Since the workspace is a separate git repository, you can inspect Claude Code's commit history:
+
+```bash
+# View agent's commit history
+cd workspace
+git log --oneline
+
+# See what changed in last 3 commits
+git log -p -3
+
+# See changes in a specific file
+git log -p -- target/ace/playbook.ts
+
+# Check workspace status
+git status
+
+# Diff between commits
+git diff HEAD~3 HEAD
+```
+
+## Cleanup
+
+```bash
+# Reset workspace and archive current run
+./reset_workspace.sh
+
+# This will:
+# - Archive current playbook to .data/logs/archive_TIMESTAMP/
+# - Reset workspace git to clean state
+# - Clone fresh source code
+# - Keep learned playbook (persists in .data/)
+
+# Nuclear option - delete everything and start fresh
+rm -rf workspace/ .data/
+./reset_workspace.sh  # Reinitialize
+```
 
 ## Comparison: Integration Pattern vs Old Approach
 
