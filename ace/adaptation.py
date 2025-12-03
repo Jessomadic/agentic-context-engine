@@ -360,16 +360,16 @@ class ACEBase:
         """Get async learning statistics.
 
         Returns:
-            Dict with tasks_submitted, reflections_completed, curations_completed,
-            tasks_failed, curator_queue_size, is_running
+            Dict with tasks_submitted, reflections_completed, skill_updates_completed,
+            tasks_failed, skill_manager_queue_size, is_running
         """
         if self._async_pipeline is None:
             return {
                 "tasks_submitted": 0,
                 "reflections_completed": 0,
-                "curations_completed": 0,
+                "skill_updates_completed": 0,
                 "tasks_failed": 0,
-                "curator_queue_size": 0,
+                "skill_manager_queue_size": 0,
                 "is_running": False,
             }
         return self._async_pipeline.stats

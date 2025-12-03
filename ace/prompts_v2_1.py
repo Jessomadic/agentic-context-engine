@@ -1546,7 +1546,7 @@ results = manager.compare_versions("agent", {
 
 1. **15-20% better compliance** from stronger language
 2. **Clearer trigger conditions** reduce ambiguity
-3. **Atomic strategies** improve playbook quality
+3. **Atomic strategies** improve skillbook quality
 4. **Progressive disclosure** aids comprehension
 5. **Quality metrics** enable better filtering
 
