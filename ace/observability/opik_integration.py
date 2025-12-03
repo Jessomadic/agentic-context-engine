@@ -96,7 +96,7 @@ class OpikIntegration:
             try:
                 # Configure Opik for local use without interactive prompts
                 # Set environment variables to prevent prompts
-                os.environ.setdefault("OPIK_URL_OVERRIDE", "http://localhost:5173")
+                os.environ.setdefault("OPIK_URL_OVERRIDE", "http://localhost:5173/api")
                 os.environ.setdefault("OPIK_WORKSPACE", "default")
                 opik.configure(use_local=True)
                 logger.info(f"Opik configured locally for project: {project_name}")

@@ -189,7 +189,52 @@ class InstructorClient:
         call_params.update({k: v for k, v in kwargs.items() if k not in call_params})
 
         try:
-            # Use Instructor's patched completion
+            # Route through base LLM client to ensure callbacks (including Opik) are triggered
+            # This is critical for token tracking and observability
+            if hasattr(self.llm, 'complete') and isinstance(self.llm, LiteLLMClient):
+                # Convert messages back to prompt format for base LLM
+                prompt_parts = []
+                system_prompt = None
+
+                for msg in messages:
+                    if msg.get("role") == "system":
+                        system_prompt = msg["content"]
+                    elif msg.get("role") == "user":
+                        prompt_parts.append(msg["content"])
+
+                combined_prompt = "\n\n".join(prompt_parts)
+
+                # Extract base LLM parameters (remove Instructor-specific ones)
+                base_params = {k: v for k, v in call_params.items()
+                              if k not in ['messages', 'response_model', 'max_retries']}
+
+                # Add system prompt if present
+                if system_prompt:
+                    base_params["system"] = system_prompt
+
+                # Call through base LLM (this triggers Opik callbacks)
+                raw_response = self.llm.complete(combined_prompt, **base_params)
+
+                # Parse the response with Pydantic validation
+                import json
+                from pydantic import ValidationError
+
+                try:
+                    # Try to parse the raw response as JSON
+                    text = raw_response.text.strip()
+                    if text.startswith('{') and text.endswith('}'):
+                        data = json.loads(text)
+                        validated_response = response_model.model_validate(data)
+                        logger.debug(f"Successfully validated {response_model.__name__} via base LLM")
+                        return validated_response
+                    else:
+                        # If not valid JSON, fall back to Instructor
+                        logger.debug(f"Base LLM response not JSON, falling back to Instructor for {response_model.__name__}")
+                except (json.JSONDecodeError, ValidationError) as e:
+                    # If validation fails, fall back to Instructor
+                    logger.debug(f"Base LLM validation failed, falling back to Instructor: {e}")
+
+            # Fallback: Use Instructor's patched completion
             response = self.client.chat.completions.create(**call_params)
             logger.debug(
                 f"Instructor validation successful for {response_model.__name__}"

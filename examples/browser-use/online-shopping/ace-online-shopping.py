@@ -280,12 +280,26 @@ async def main():
             curator_tokens,
         ) = get_ace_token_usage(run_start_time)
 
+        # Calculate accuracy (updated correct items)
+        correct_items = 0
+        if hasattr(history, "final_result"):
+            result_text = history.final_result()
+            # Check for correct cheapest items
+            correct_items += 1 if "Valflora" in result_text and "1.40" in result_text else 0  # Milk
+            correct_items += 1 if "M-Budget" in result_text and "eggs" in result_text and "4.25" in result_text else 0  # Eggs
+            correct_items += 1 if "M-Budget" in result_text and ("Bananas" in result_text or "bananas" in result_text) and "1.20" in result_text else 0  # Bananas (must be M-Budget 1.20)
+            correct_items += 1 if "M-Classic" in result_text and "butter" in result_text and "7.80" in result_text else 0  # Butter (M-Classic 7.80)
+            correct_items += 1 if "Fleur de Pains" in result_text and "3.40" in result_text else 0  # Bread
+
+        accuracy_pct = (correct_items / 5) * 100
+
         print(f"\n📊 PERFORMANCE METRICS:")
         print("-" * 60)
         print(f"🔄 Steps taken: {steps}")
         print(f"🤖 Browser-use tokens: {browseruse_tokens:,}")
         print(f"🧠 ACE learning tokens: {ace_tokens:,}")
         print(f"💰 Total tokens: {browseruse_tokens + ace_tokens:,}")
+        print(f"🎯 Accuracy: {correct_items}/5 ({accuracy_pct:.0f}%)")
 
     except Exception as e:
         print(f"\n❌ Shopping failed: {e}")
