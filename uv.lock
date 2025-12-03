@@ -33,6 +33,7 @@ dependencies = [
     { name = "browser-use" },
     { name = "instructor" },
     { name = "litellm" },
+    { name = "opik" },
     { name = "pydantic" },
     { name = "python-dotenv" },
     { name = "python-toon" },
@@ -102,6 +103,7 @@ requires-dist = [
     { name = "langchain-openai", marker = "extra == 'all'", specifier = ">=0.3.35" },
     { name = "langchain-openai", marker = "extra == 'langchain'", specifier = ">=0.3.35" },
     { name = "litellm", specifier = ">=1.78.0" },
+    { name = "opik", specifier = ">=1.8.0" },
     { name = "opik", marker = "extra == 'all'", specifier = ">=1.8.0" },
     { name = "opik", marker = "extra == 'observability'", specifier = ">=1.8.0" },
     { name = "pydantic", specifier = ">=2.0.0" },
@@ -1626,7 +1628,7 @@ wheels = [
 
 [[package]]
 name = "litellm"
-version = "1.78.7"
+version = "1.78.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiohttp" },
@@ -1642,9 +1644,9 @@ dependencies = [
     { name = "tiktoken" },
     { name = "tokenizers" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/16/d5/339b60011b49d7a7976ca9dd33b20842de59e7ec202d17a1d6736ef1e0a9/litellm-1.78.7.tar.gz", hash = "sha256:6b10f5c7dc217bde3481fa4f70b5c37edbfa617bec7149276833d311f76a6783", size = 10844752, upload-time = "2025-10-22T22:18:07.962Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/fd/3e/1a96a3caeeb6092d85e70904e2caa98598abb7179cefe734e2fbffac6978/litellm-1.78.0.tar.gz", hash = "sha256:020e40e0d6e16009bb3a6b156d4c1d98cb5c33704aa340fdf9ffd014bfd31f3b", size = 10684595, upload-time = "2025-10-11T19:28:27.369Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ce/9e/c240c28bc6d80cbbe320c1190ed1c1f8dd2cc26488edc0665fb007992201/litellm-1.78.7-py3-none-any.whl", hash = "sha256:aa93ae1fefe02fb00b2a78eba3c95002f9ef478bade3e22e63508830182e2dfe", size = 9864751, upload-time = "2025-10-22T22:18:03.92Z" },
+    { url = "https://files.pythonhosted.org/packages/fc/fb/38a48efe3e05a8e9a9765b991740282e0358a83fb896ec00d70bf1448791/litellm-1.78.0-py3-none-any.whl", hash = "sha256:a9d6deee882de8df38ca24beb930689f49209340137ff8a3dcab0c5fc4a0513d", size = 9677983, upload-time = "2025-10-11T19:28:23.242Z" },
 ]
 
 [[package]]
@@ -2266,7 +2268,7 @@ wheels = [
 
 [[package]]
 name = "opik"
-version = "1.8.68"
+version = "1.8.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "boto3-stubs", extra = ["bedrock-runtime"] },
@@ -2285,9 +2287,9 @@ dependencies = [
     { name = "tqdm" },
     { name = "uuid6" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/5b/1d/58be766f9befdc53b29af7f12ada5e15fafa4ebe243352b1cf46524148bf/opik-1.8.68.tar.gz", hash = "sha256:f5298acc84224261eb1d21e8184799b0116f936f201a5a5c5b933041c0a0f9f3", size = 397477, upload-time = "2025-10-07T14:01:25.777Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/e4/61/a95e3c9b25ef33682415260bd6a20023b1c4f09fb6c61ddc95f9e947f4ee/opik-1.8.0.tar.gz", hash = "sha256:de4a0f3ac79bc7557c557dc889f689e2665db0f9c9ac69f55ff6ceb6125f6db3", size = 340997, upload-time = "2025-07-08T09:25:50.808Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/b9/8e/378584e92808d61866162417eb294a1d6feeb62507ffae456cb730239418/opik-1.8.68-py3-none-any.whl", hash = "sha256:f65846fd5880a88af64be2153cea744c4232fb53c9a348ec97ee1d90c68c618c", size = 745969, upload-time = "2025-10-07T14:01:23.503Z" },
+    { url = "https://files.pythonhosted.org/packages/5d/20/4dfa53e7370b70c3231f82664455f3bfc107eb146e180dcf03b0cf5e836e/opik-1.8.0-py3-none-any.whl", hash = "sha256:f6a7cfc7f212670dd9747beb8a9462ca378853a6ded31a515396f6692641a99d", size = 648270, upload-time = "2025-07-08T09:25:48.581Z" },
 ]
 
 [[package]]
