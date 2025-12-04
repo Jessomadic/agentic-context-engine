@@ -9,13 +9,13 @@
 
 ## Turn your agent's failures into better prompts. 🔄
 
-### The Problem with Traditional Prompt Engineering
+## The Problem with Traditional Prompt Engineering
 - Time-consuming manual iteration cycles
 - Prompt drift and regression issues
 - Lack of systematic learning from failures
 - One-size-fits-all prompts that don't adapt to specific use cases
 
-### How ACE Replaces Manual Prompt Engineering
+## How ACE Replaces Manual Prompt Engineering
 - **Automatic Skill Generation**: ACE observes agent execution and generates context-specific skills
 - **Continuous Improvement**: Every interaction makes your agent smarter without manual intervention
 - **Learn from Production**: Real-world usage patterns directly improve agent behavior
@@ -34,7 +34,7 @@
 4. **Persist**: Save optimized skillbooks for consistent performance
 5. **Update prompt**: Skills are automatically injected in future runs
 
-### ⚡ Quick Start
+## ⚡ Quick Start
 
 #### Enhance your existing agents
 ```python
@@ -80,7 +80,7 @@ await agent.run(task="Navigate complex website")  # Improves with each interacti
 - Monitor token usage reduction
 - Analyze which skills contribute most to success
 
-### ❓ FAQ
+## ❓ FAQ
 
 **Can I combine manual prompts with ACE skills?**
 Yes! ACE skills complement your base prompts. Start with manual prompts and let ACE build domain-specific expertise autonomously.
@@ -94,7 +94,7 @@ ACE automatically scores skills based on outcomes. Poor-performing skills get lo
 **Can I share learned skills between agents?**
 Absolutely! Skillbooks are portable JSON files that can be shared across agents handling similar tasks.
 
-### Next Steps
+## Next Steps
 - Try the [examples](../) in this folder
 - Read more about [ACE on GitHub](https://github.com/kayba-ai/agentic-context-engine)
 - Join our [Discord](https://discord.gg/mqCqH7sTyK) for optimization tips
