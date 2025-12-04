@@ -9,7 +9,6 @@ openai/ prefix with a custom base_url instead of ollama/.
 from ace.integrations import ACELiteLLM
 from ace import Sample, SimpleEnvironment
 from pathlib import Path
-import os
 
 
 def main():
@@ -19,17 +18,15 @@ def main():
     lm_studio_url = "http://localhost:1234/v1"
 
     # 1. Create ACELiteLLM agent pointing to LM Studio
-    # Note: Use "openai/" prefix with api_base for LM Studio
+    # Note: Use "openai/" prefix with base_url for LM Studio
     print(f"\n📡 Connecting to LM Studio at {lm_studio_url}...")
-
-    # Set environment variable for LiteLLM to use custom endpoint
-    os.environ["OPENAI_API_BASE"] = lm_studio_url
 
     skillbook_path = Path("lm_studio_learned_strategies.json")
 
     try:
         agent = ACELiteLLM(
             model="openai/local-model",  # LM Studio serves any model as 'local-model'
+            base_url=lm_studio_url,
             max_tokens=512,
             temperature=0.2,
             is_learning=True,
