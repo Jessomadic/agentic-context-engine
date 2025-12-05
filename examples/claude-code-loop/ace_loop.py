@@ -30,7 +30,7 @@ ACE_MODEL = os.getenv("ACE_MODEL", "claude-sonnet-4-5-20250929")
 DEMO_DIR = Path(__file__).parent
 WORKSPACE_DIR = DEMO_DIR / "workspace"
 DATA_DIR = Path(os.getenv("ACE_DEMO_DATA_DIR", str(DEMO_DIR / ".data")))
-SKILLBOOK_PATH = DATA_DIR / "skillbooks" / "ace_typescript.json"
+SKILLBOOK_PATH = DATA_DIR / "skillbooks" / "skillbook.json"
 PROMPT_PATH = DEMO_DIR / "prompt.md"
 
 DEFAULT_PROMPT = """Your job is to complete the task defined in the workspace.
@@ -53,13 +53,12 @@ def load_prompt() -> str:
 
 
 def get_commit_count(workspace_dir: Path) -> int:
-    """Get current commit count in target repo."""
-    target_dir = workspace_dir / "target"
-    if not (target_dir / ".git").exists():
+    """Get current commit count in workspace repo."""
+    if not (workspace_dir / ".git").exists():
         return 0
     result = subprocess.run(
         ["git", "rev-list", "--count", "HEAD"],
-        cwd=target_dir,
+        cwd=workspace_dir,
         stdout=subprocess.PIPE,
         stderr=subprocess.DEVNULL,
         text=True,
@@ -71,13 +70,12 @@ def get_commit_count(workspace_dir: Path) -> int:
 
 def are_recent_commits_code_changes(workspace_dir: Path, n: int = 3) -> bool:
     """Check if recent N commits contain actual code changes (not just docs)."""
-    target_dir = workspace_dir / "target"
-    if not (target_dir / ".git").exists():
+    if not (workspace_dir / ".git").exists():
         return True
 
     result = subprocess.run(
         ["git", "log", f"-{n}", "--name-only", "--format="],
-        cwd=target_dir,
+        cwd=workspace_dir,
         capture_output=True,
         text=True,
     )
