@@ -39,14 +39,7 @@ git clone https://github.com/kayba-ai/agentic-context-engine.git
 cd agentic-context-engine/examples/claude-code-loop
 ```
 
-### 2. Install
-
-```bash
-uv venv
-uv pip install ace-framework
-```
-
-### 3. Setup
+### 2. Setup
 
 ```bash
 # Add your ANTHROPIC_API_KEY to .env.ace
@@ -55,11 +48,11 @@ uv pip install ace-framework
 
 `reset_workspace.sh` copies `workspace_template/` to `workspace/` and initializes it as a git repo. Claude Code runs inside `workspace/` and is constrained to that directory. If you want to work on an existing codebase, put it in `workspace_template/` first.
 
-### 4. Define Your Task
+### 3. Define Your Task
 
 Edit `prompt.md` with your task (see [Prompt Tips](#-prompt-tips) for guidance).
 
-### 5. Run
+### 4. Run
 
 ```bash
 uv run python ace_loop.py
@@ -69,7 +62,7 @@ Claude Code starts working in `workspace/` and learned skills get stored in `ski
 
 You can stop anytime with `Ctrl+C` and resume later with `uv run python ace_loop.py` - it picks up where it left off. We recommend leaving it running until stall detection kicks in (no new commits for 4 iterations) or you're happy with the result.
 
-### 6. Reset
+### 5. Reset
 
 Run this when starting a new task or trying a different prompt (workspace and skillbook get archived to logs).
 
