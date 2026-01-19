@@ -21,7 +21,6 @@ ACE enables AI agents to **learn from their execution feedback**—what works, w
 
 The framework maintains a **Skillbook**: a living document of strategies that evolves with each task. When your agent succeeds, ACE extracts patterns. When it fails, ACE learns what to avoid. All learning happens transparently in context.
 
-### Why ACE?
 - **Self-Improving**: Agents autonomously get smarter with each task
 - **20-35% Better Performance**: Proven improvements on complex tasks
 - **49% Token Reduction**: Demonstrated in browser automation benchmarks
