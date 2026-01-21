@@ -19,6 +19,7 @@ Requirements:
 import os
 from pathlib import Path
 from datetime import datetime
+from itertools import groupby
 from typing import List, Dict, Any
 
 from ace import (
@@ -139,12 +140,19 @@ def main():
     print(f"Generated: {len(skills)} skills")
     print(f"Saved to: {OUTPUT_SKILLBOOK}")
 
-    # Save simplified version with just skill content
-    OUTPUT_SKILLS_ONLY = SCRIPT_DIR / f'skills_{timestamp}.md'
-    with open(OUTPUT_SKILLS_ONLY, 'w') as f:
-        for skill in sorted(skills, key=lambda s: s.section):
-            f.write(f"- {skill.content}\n")
-    print(f"Skills only: {OUTPUT_SKILLS_ONLY}")
+    # Save skills grouped by section in markdown format
+    OUTPUT_SKILLS_MD = SCRIPT_DIR / f'skills_{timestamp}.md'
+    with open(OUTPUT_SKILLS_MD, 'w') as f:
+        for section, section_skills in groupby(sorted(skills, key=lambda s: s.section), key=lambda s: s.section):
+            f.write(f"## {section}\n\n")
+            for skill in section_skills:
+                f.write(f"- {skill.content}\n")
+                if skill.justification:
+                    f.write(f"  Justification: {skill.justification}\n")
+                if skill.evidence:
+                    f.write(f"  Evidence: {skill.evidence}\n")
+            f.write("\n")
+    print(f"Skills: {OUTPUT_SKILLS_MD}")
 
     if skills:
         print("\nTop skills:")
