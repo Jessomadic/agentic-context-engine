@@ -109,7 +109,7 @@ def main():
     if not conversations:
         print("\nTo use this example:")
         print(f"  1. Create directory: {CONVERSATIONS_DIR}/")
-        print(f"  2. Add .md conversation files to that directory")
+        print(f"  2. Add .md or .toon trace files to that directory (Use the convert.py script to convert JSON to TOON)")
         return
 
     samples = create_samples(conversations)
