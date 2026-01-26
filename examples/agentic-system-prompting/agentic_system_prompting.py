@@ -28,6 +28,11 @@ from datetime import datetime
 from itertools import groupby
 from typing import List, Dict, Any
 
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
 from ace import (
     Skillbook,
     Sample,
@@ -53,16 +58,16 @@ def load_conversations(conversations_dir: Path) -> List[Dict[str, Any]]:
     # Load markdown files
     for file_path in sorted(conversations_dir.glob("*.md")):
         try:
-            content = file_path.read_text(encoding='utf-8')
-            conversations.append({'filename': file_path.name, 'content': content})
+            content = file_path.read_text(encoding="utf-8")
+            conversations.append({"filename": file_path.name, "content": content})
         except Exception as e:
             print(f"Error reading {file_path.name}: {e}")
 
     # Load TOON files (fed directly to LLM as raw text)
     for file_path in sorted(conversations_dir.glob("*.toon")):
         try:
-            content = file_path.read_text(encoding='utf-8')
-            conversations.append({'filename': file_path.name, 'content': content})
+            content = file_path.read_text(encoding="utf-8")
+            conversations.append({"filename": file_path.name, "content": content})
         except Exception as e:
             print(f"Error reading {file_path.name}: {e}")
 
@@ -78,7 +83,7 @@ def create_samples(conversations: List[Dict[str, Any]]) -> List[Sample]:
         sample = Sample(
             question="-",
             ground_truth="",
-            metadata={'response': conv['content']},
+            metadata={"response": conv["content"]},
         )
         samples.append(sample)
 
@@ -89,18 +94,20 @@ def main():
     # =========================================================================
     # USER CONFIGURATION - Update these values for your use case
     # =========================================================================
-    CONVERSATIONS_DIR = Path("/path/to/your/conversations")  # Absolute path to .md files
-    LLM_MODEL = "gpt-5-mini"                   # LLM model for analysis
-    EPOCHS = 1                                 # Number of training epochs
-    DEDUPLICATOR_SIMILARITY_THRESHOLD = 0.7    # Deduplication threshold (0.0-1.0)
+    CONVERSATIONS_DIR = Path(
+        "/path/to/your/conversations"
+    )  # Absolute path to .md files
+    LLM_MODEL = "gpt-5-mini"  # LLM model for analysis
+    EPOCHS = 1  # Number of training epochs
+    DEDUPLICATOR_SIMILARITY_THRESHOLD = 0.7  # Deduplication threshold (0.0-1.0)
     # =========================================================================
 
     SCRIPT_DIR = Path(__file__).parent
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    OUTPUT_SKILLBOOK = SCRIPT_DIR / f'skillbook_{timestamp}.json'
+    OUTPUT_SKILLBOOK = SCRIPT_DIR / f"skillbook_{timestamp}.json"
 
     # Check for API keys
-    if not os.getenv('OPENAI_API_KEY'):
+    if not os.getenv("OPENAI_API_KEY"):
         print("WARNING: OPENAI_API_KEY required for deduplication embeddings!")
         return
 
@@ -109,7 +116,9 @@ def main():
     if not conversations:
         print("\nTo use this example:")
         print(f"  1. Create directory: {CONVERSATIONS_DIR}/")
-        print(f"  2. Add .md or .toon trace files to that directory (Use the convert.py script to convert JSON to TOON)")
+        print(
+            f"  2. Add .md or .toon trace files to that directory (Use the convert.py script to convert JSON to TOON)"
+        )
         return
 
     samples = create_samples(conversations)
@@ -124,7 +133,9 @@ def main():
 
     agent = ReplayAgent()
     reflector = Reflector(llm=llm, prompt_template=prompt_mgr.get_reflector_prompt())
-    skill_manager = SkillManager(llm=llm, prompt_template=prompt_mgr.get_skill_manager_prompt())
+    skill_manager = SkillManager(
+        llm=llm, prompt_template=prompt_mgr.get_skill_manager_prompt()
+    )
 
     # Deduplication uses OpenAI embeddings to detect and merge similar skills
     dedup_config = DeduplicationConfig(
@@ -141,10 +152,14 @@ def main():
         dedup_config=dedup_config,
     )
 
-    print(f"\nStarting analysis: {len(samples)} conversations, {EPOCHS} epoch(s), model={LLM_MODEL}")
+    print(
+        f"\nStarting analysis: {len(samples)} conversations, {EPOCHS} epoch(s), model={LLM_MODEL}"
+    )
 
     start_time = datetime.now()
-    results = adapter.run(samples=samples, environment=SimpleEnvironment(), epochs=EPOCHS)
+    results = adapter.run(
+        samples=samples, environment=SimpleEnvironment(), epochs=EPOCHS
+    )
     duration = (datetime.now() - start_time).total_seconds()
 
     # Save and display results
@@ -157,9 +172,11 @@ def main():
     print(f"Saved to: {OUTPUT_SKILLBOOK}")
 
     # Save skills grouped by section in markdown format
-    OUTPUT_SKILLS_MD = SCRIPT_DIR / f'skills_{timestamp}.md'
-    with open(OUTPUT_SKILLS_MD, 'w') as f:
-        for section, section_skills in groupby(sorted(skills, key=lambda s: s.section), key=lambda s: s.section):
+    OUTPUT_SKILLS_MD = SCRIPT_DIR / f"skills_{timestamp}.md"
+    with open(OUTPUT_SKILLS_MD, "w") as f:
+        for section, section_skills in groupby(
+            sorted(skills, key=lambda s: s.section), key=lambda s: s.section
+        ):
             f.write(f"## {section}\n\n")
             for skill in section_skills:
                 f.write(f"- {skill.content}\n")
@@ -172,9 +189,11 @@ def main():
 
     if skills:
         print("\nTop skills:")
-        for i, skill in enumerate(sorted(skills, key=lambda s: s.helpful, reverse=True)[:5], 1):
+        for i, skill in enumerate(
+            sorted(skills, key=lambda s: s.helpful, reverse=True)[:5], 1
+        ):
             print(f"  {i}. [{skill.section}] {skill.content[:80]}...")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
