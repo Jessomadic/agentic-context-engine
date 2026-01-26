@@ -9,6 +9,35 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
+## Setup
+
+### Installation
+
+```bash
+pip install ace-framework
+```
+
+Or for development:
+```bash
+git clone https://github.com/kayba-ai/agentic-context-engine
+cd agentic-context-engine
+uv sync
+```
+
+### API Keys
+
+Create a `.env` file in the project root:
+
+```bash
+# Required for analysis (choose one)
+OPENAI_API_KEY=your-openai-key
+# OR
+ANTHROPIC_API_KEY=your-anthropic-key
+
+# Required for deduplication (uses OpenAI embeddings)
+OPENAI_API_KEY=your-openai-key
+```
+
 ## The Problem with Manual System Prompting
 
 - Time-consuming iteration cycles of trial and error
