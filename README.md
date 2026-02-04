@@ -6,7 +6,7 @@
 [![Discord](https://img.shields.io/discord/1429935408145236131?label=Discord&logo=discord&logoColor=white&color=5865F2)](https://discord.gg/mqCqH7sTyK)
 [![Twitter Follow](https://img.shields.io/twitter/follow/kaybaai?style=social)](https://twitter.com/kaybaai)
 [![PyPI version](https://badge.fury.io/py/ace-framework.svg)](https://badge.fury.io/py/ace-framework)
-[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/downloads/) 
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
 **AI agents that get smarter with every task**
@@ -67,14 +67,14 @@ print(answer)  # "ACE allows AI agents to remember and learn from experience!"
 
 ## Use Cases
 
+### Claude Code with Learning [→ Setup Guide](ace/integrations/claude_code)
+Run coding tasks with Claude Code while ACE learns patterns from each execution, building expertise over time for your specific codebase and workflows.
+
 ### Enhance Existing Agents
 Wrap your existing agent (browser-use, LangChain, custom) with ACE learning. Your agent executes tasks normally while ACE analyzes results and builds a skillbook of effective strategies.
 
 ### Automated System Prompting
 The Skillbook acts as an evolving system prompt that automatically improves based on execution feedback—no manual prompt engineering required.
-
-### Claude Code with Learning
-Run coding tasks with Claude Code while ACE learns patterns from each execution, building expertise over time for your specific codebase and workflows.
 
 ### Build Self-Improving Agents
 Create new agents with built-in learning for customer support, data extraction, code generation, research, content creation, and task automation.

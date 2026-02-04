@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ace-framework"
-version = "0.7.1"
+version = "0.7.3"
 description = "Build self-improving AI agents that learn from experience"
 readme = "README.md"
 requires-python = "==3.12.*"
@@ -78,6 +78,9 @@ all = [
     "accelerate>=0.20.0",
 ]
 
+[project.scripts]
+ace-learn = "ace.integrations.claude_code.learner:main"
+
 [project.urls]
 Homepage = "https://kayba.ai"
 Documentation = "https://github.com/Kayba-ai/agentic-context-engine#readme"
@@ -104,15 +107,16 @@ demos = [
     "playwright>=1.40.0",
 ]
 
-[tool.setuptools]
-packages = ["ace", "ace.llm_providers", "ace.observability"]
+[tool.setuptools.packages.find]
+include = ["ace", "ace.*"]
 
 [tool.setuptools.package-data]
 ace = ["py.typed"]
+"ace.integrations.claude_code" = ["commands/*.md"]
 
 [tool.black]
 line-length = 88
-target-version = ['py311', 'py312']
+target-version = ['py312']
 include = '\.pyi?$'
 exclude = '''
 /(
@@ -124,7 +128,7 @@ exclude = '''
 '''
 
 [tool.mypy]
-python_version = "3.11"
+python_version = "3.12"
 warn_return_any = false
 warn_unused_configs = true
 disallow_untyped_defs = false

@@ -5,6 +5,18 @@ All notable changes to ACE Framework will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.3] - 2026-02-04
+
+### Added
+- ACE learning for Claude Code via `/ace-learn` (transcript-based learning and skillbook updates).
+- CLI patching to minimize Claude Code system prompt overhead for learning runs.
+
+### Fixed
+- Claude Code transcript parsing for feedback and last-prompt extraction edge cases.
+
+### Changed
+- Unified agent guidance into `AGENTS.md` with `CLAUDE.md` symlink.
+
 ## [0.7.0] - 2025-12-04
 
 ### ⚠️ Breaking Changes
@@ -99,7 +111,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Removed empty ace/explainability directory
   - Migrated to production-grade Opik monitoring
   - Updated all documentation to reflect this change
-- Improved Python version requirements consistency (3.11+ everywhere)
+- Improved Python version requirements consistency (3.12 everywhere)
 - Enhanced README with clearer examples and installation options
 - Reorganized examples directory for better discoverability
 - Updated CLAUDE.md with comprehensive codebase guidance
