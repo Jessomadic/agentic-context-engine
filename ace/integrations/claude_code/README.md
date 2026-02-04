@@ -1,6 +1,14 @@
 # ACE Claude Code Integration
+![GitHub stars](https://img.shields.io/github/stars/kayba-ai/agentic-context-engine?style=social)
+[![Discord](https://img.shields.io/discord/1429935408145236131?label=Discord&logo=discord&logoColor=white&color=5865F2)](https://discord.gg/mqCqH7sTyK)
+[![Twitter Follow](https://img.shields.io/twitter/follow/kaybaai?style=social)](https://twitter.com/kaybaai)
+[![PyPI version](https://badge.fury.io/py/ace-framework.svg)](https://badge.fury.io/py/ace-framework)
+[![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/downloads/) 
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
 Learn from Claude Code sessions. No API keys required - uses your existing Claude subscription.
+
+⭐ Star this repo if you find it useful!
 
 ## Overview
 
