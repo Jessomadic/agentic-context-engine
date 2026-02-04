@@ -64,12 +64,31 @@ except ImportError:
     ACELangChain = None  # type: ignore
     LANGCHAIN_AVAILABLE = False
 
-# Import Claude Code integration if available
+# Import Claude Code CLI integration (always available)
 try:
-    from .claude_code import ACEClaudeCode, CLAUDE_CODE_AVAILABLE
+    from .claude_code_cli import ACEClaudeCode, ClaudeCodeResult, CLAUDE_CODE_AVAILABLE
 except ImportError:
     ACEClaudeCode = None  # type: ignore
+    ClaudeCodeResult = None  # type: ignore
     CLAUDE_CODE_AVAILABLE = False
+
+# Import Claude Code learner integration (always available)
+try:
+    from .claude_code import (
+        ACELearner,
+        ACEHookLearner,  # Backwards compatibility alias
+        CLIClient,
+        find_latest_transcript,
+        find_project_root,
+        update_claude_md,
+    )
+except ImportError:
+    ACELearner = None  # type: ignore
+    ACEHookLearner = None  # type: ignore
+    CLIClient = None  # type: ignore
+    find_latest_transcript = None  # type: ignore
+    find_project_root = None  # type: ignore
+    update_claude_md = None  # type: ignore
 
 __all__ = [
     "wrap_skillbook_context",
@@ -77,6 +96,15 @@ __all__ = [
     "ACEAgent",
     "ACELangChain",
     "ACEClaudeCode",
+    "ClaudeCodeResult",
+    # Claude Code learner integration
+    "ACELearner",
+    "ACEHookLearner",  # Backwards compatibility alias
+    "CLIClient",
+    "find_latest_transcript",
+    "find_project_root",
+    "update_claude_md",
+    # Feature flags
     "BROWSER_USE_AVAILABLE",
     "LANGCHAIN_AVAILABLE",
     "CLAUDE_CODE_AVAILABLE",
